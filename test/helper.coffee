@@ -26,19 +26,3 @@ global.itSync = (desc, callback) ->
       callback.apply that, [done]
       done()
     ).run()
-
-# Stub for testing Integration wit Model.
-exports.Model = class Model
-  isModel: true
-
-  constructor: (attrs) ->
-    @errors = {}
-    @attrs = attrs || {}
-    @attrs._class = 'Model'
-  getId: -> @attrs.id
-  setId: (id) -> @attrs.id = id
-  toHash: -> @attrs
-  @fromHash: (doc) -> new Model doc
-
-Driver.fromHash = (doc) ->
-  if doc._class == 'Model' then new Model(doc) else doc
