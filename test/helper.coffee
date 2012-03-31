@@ -1,11 +1,11 @@
 _      = require 'underscore'
 Driver = require '../lib/index'
 require '../lib/sync'
-require '../lib/spec'
 
 global.expect  = require 'expect.js'
-
 global.p = (args...) -> console.log args...
+
+Driver.Db.prototype.logger = null
 
 # Support for synchronous specs.
 global.itSync = (desc, callback) ->

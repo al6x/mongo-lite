@@ -54,3 +54,13 @@ module.exports =
       hash.id = hash._id if hash._id?
       delete hash._id
     hash
+
+  # Generates random short 6-digits string ids.
+  idSize: 6
+  idSymbols: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+  generateId: ->
+    [id, count] = ["", @idSize + 1]
+    while count -= 1
+      rand = Math.floor(Math.random() * @idSymbols.length)
+      id += @idSymbols[rand]
+    id

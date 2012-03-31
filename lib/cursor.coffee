@@ -87,6 +87,8 @@ class Driver.Cursor
       @collection.connect callback, (nCollection) =>
         options = helper.cleanOptions @options
         selector = helper.convertSelectorId @selector
+        msg = "#{@collection.name}.find #{util.inspect(selector)}, #{util.inspect(options)}"
+        @collection.db.info msg
         @nCursor ?= nCollection.find selector, options
         @_next callback
 
@@ -123,6 +125,7 @@ class Driver.Cursor
     else
       @collection.connect callback, (nCollection) =>
         selector = helper.convertSelectorId @selector
+        @collection.db.info "#{@collection.name}.count #{util.inspect(selector)}"
         nCollection.count selector, callback
 
   # CRUD.

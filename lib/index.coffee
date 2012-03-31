@@ -1,6 +1,6 @@
 module.exports = require './driver'
 
-require './server'
+require './connection'
 require './db'
 require './collection'
 require './cursor'

@@ -1,7 +1,10 @@
 require './helper'
+mongo = require '../lib/index'
 
 describe "Cursor", ->
-  withMongo()
+  beforeEach (next) ->
+    @db = mongo.db('test')
+    @db.clear next
 
   itSync "should return first element", ->
     units = @db.collection 'units'

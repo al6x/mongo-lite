@@ -1,5 +1,6 @@
 require './helper'
 mongo = require '../lib/index'
+_     = require 'underscore'
 
 # Stub for Model.
 Model = class Model
@@ -12,19 +13,22 @@ Model = class Model
   getId: -> @attrs.id
   setId: (id) -> @attrs.id = id
   toHash: -> @attrs
-  @fromHash: (doc) -> new Model doc
+  addError: (errors) ->
+    _(@errors).extend errors
 
 mongo.fromHash = (doc) ->
   if doc._class == 'Model' then new Model(doc) else doc
 
 describe "Integration with Model", ->
-  withMongo()
+  beforeEach (next) ->
+    @db = mongo.db('test')
+    @db.clear next
 
   describe "Collection", ->
     itSync "should create", ->
       units = @db.collection 'units'
       unit = new Model name: 'Probe',  status: 'alive'
-      expect(units.create(unit)).not.to.be undefined
+      expect(units.create(unit)).to.be true
       expect(unit.attrs.id).to.be.a 'string'
       expect(units.first(name: 'Probe').attrs.status).to.eql 'alive'
 
@@ -56,6 +60,14 @@ describe "Integration with Model", ->
       unit = new Model name: 'Probe'
       units.save unit
       expect(units.first({}, raw: true)).to.eql unit.toHash()
+
+    itSync "should intercept unique index errors", ->
+      units = @db.collection 'units'
+      unit = new Model name: 'Probe',  status: 'alive'
+      expect(units.create(unit)).to.be true
+      expect(unit.attrs.id).to.be.a 'string'
+      expect(units.create(unit)).to.be false
+      expect(unit.errors.base).to.be 'not unique'
 
   describe "Cursor", ->
     itSync "should return first element", ->

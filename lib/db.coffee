@@ -3,8 +3,13 @@ NDriver = require 'mongodb'
 Driver  = require './driver'
 
 class Driver.Db
-  constructor: (@name, @server, @options = {}) ->
+  constructor: (@name, @connection, @options = {}) ->
     @collectionMixins = {}
+
+  # Override it with custom implementation or set to `null` to disable.
+  logger: console
+
+  info: (msg) -> @logger?.info "#{@name}.#{msg}"
 
   collection: (name, arg) ->
     throw new Error "should be used without callback!" if _.isFunction(arg)
@@ -30,6 +35,7 @@ class Driver.Db
   collectionNames: (options..., callback) ->
     options = options[0] || {}
     that = @
+    @info "collectionNames"
     @connect callback, (nDb) ->
       nDb.collectionNames (err, names) ->
         names = _(names).map (obj) -> obj.name.replace("#{that.name}.", '') unless err
@@ -39,6 +45,7 @@ class Driver.Db
     throw new Error "callback required!" unless callback
     options = options[0] || {}
 
+    @info "clear"
     @collectionNames options, (err, names) =>
       return callback err if err
       names = _(names).select((name) -> !/^system\./.test(name))
@@ -60,12 +67,4 @@ class Driver.Db
 
   # Allows to defer actuall connection.
   connect: (callback, next) ->
-    throw new Error "callback required!" unless callback
-    unless @_nDb
-      tmp = new NDriver.Db @name, @server.nServer, @options
-      tmp.open (err, nDb) =>
-        return callback err if err
-        @_nDb = nDb
-        next @_nDb
-    else
-      next @_nDb
+    @connection.connectToDb @name, @options, callback, next

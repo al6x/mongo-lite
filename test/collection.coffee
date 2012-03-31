@@ -1,7 +1,10 @@
 require './helper'
+mongo = require '../lib/index'
 
 describe "Collection", ->
-  withMongo()
+  beforeEach (next) ->
+    @db = mongo.db('test')
+    @db.clear next
 
   it "should support mixins", ->
     @db.collection 'units',
