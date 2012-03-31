@@ -51,6 +51,12 @@ describe "Integration with Model", ->
       units.create unit
       expect(unit.attrs.id).to.be.a 'string'
 
+    itSync "should return raw hash if specified", ->
+      units = @db.collection 'units'
+      unit = new Model name: 'Probe'
+      units.save unit
+      expect(units.first({}, raw: true)).to.eql unit.toHash()
+
   describe "Cursor", ->
     itSync "should return first element", ->
       units = @db.collection 'units'

@@ -95,6 +95,7 @@ class Driver.Cursor
     @nCursor.nextObject (err, doc) ->
       return callback err if err
       if doc
+        doc = helper.convertDocIdToDriver doc
         obj = if that.options.raw == true
           doc
         else

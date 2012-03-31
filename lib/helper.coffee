@@ -14,7 +14,7 @@ module.exports =
     parseInt v
 
   cleanOptions: (options) ->
-    list = ['db', 'collection', 'object', 'validate', 'callbacks', 'cache']
+    list = ['db', 'collection', 'raw', 'validate', 'callbacks', 'cache']
     options = _(options).clone()
     delete options[option] for option in list
     options

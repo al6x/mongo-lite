@@ -1,7 +1,7 @@
 {
   "name"         : "mongo-lite",
   "main"         : "./lib/index",
-  "version"      : "0.1.0",
+  "version"      : "0.1.1",
   "homepage"     : "http://alexeypetrushin.github.com/mongo-lite",
   "dependencies" : {
     "mongodb"    : "0.9.x",
