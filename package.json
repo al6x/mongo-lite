@@ -1,0 +1,23 @@
+{
+  "name"         : "mongo-lite",
+  "main"         : "./lib/index",
+  "version"      : "0.1.0",
+  "homepage"     : "http://alexeypetrushin.github.com/mongo-lite",
+  "dependencies" : {
+    "mongodb"    : "0.9.x",
+    "underscore" : "1.3.x"
+  },
+  "devDependencies": {
+    "fibers"        : "0.6.x",
+    "coffee-script" : "1.2.x",
+    "mocha"         : "1.0.x",
+    "expect.js"     : "0.1.x"
+  },
+  "description"  : "Simple and minimal Driver for MongoDB",
+  "keywords"     : ["NoSQL", "MongoDB", "ODM", "ORM", "Model", "Business Logic"],
+  "author"       : {
+    "name" : "Alexey Petrushin",
+    "url"  : "http://petrush.in"
+  },
+  "license"      : "MIT"
+}
