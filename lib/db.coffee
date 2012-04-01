@@ -5,10 +5,6 @@ Driver  = require './driver'
 class Driver.Db
   constructor: (@name, @connection, @options = {}) ->
 
-  # Override it with custom implementation or set to `null` to disable.
-  logger: console
-  info: (msg) -> @logger?.info "  DB: #{@alias || @name}.#{msg}"
-
   collection: (name, options = {}) ->
     new Driver.Collection name, options, @
 
@@ -53,3 +49,5 @@ class Driver.Db
   # Allows to defer actuall connection.
   connect: (callback, next) ->
     @connection.connectToDb @name, @options, callback, next
+
+  info: (msg) -> @logger?.info "  DB: #{@alias || @name}.#{msg}"

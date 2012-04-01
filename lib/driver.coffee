@@ -69,3 +69,6 @@ _(Driver).extend
       db.alias = alias
       @databasesCache[alias] = db
     db
+
+  # Override with custom logger or set to `null` to disable.
+  logger: console
