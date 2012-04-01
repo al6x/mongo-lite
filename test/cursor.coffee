@@ -1,5 +1,5 @@
 require './helper'
-mongo = require '../lib/index'
+mongo = require '../lib/mongo'
 
 describe "Cursor", ->
   beforeEach (next) ->

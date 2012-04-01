@@ -1,5 +1,5 @@
 require './helper'
-mongo = require '../lib/index'
+mongo = require '../lib/mongo'
 _     = require 'underscore'
 
 describe "Database", ->

@@ -1,16 +1,10 @@
 require './helper'
-mongo = require '../lib/index'
+mongo = require '../lib/mongo'
 
 describe "Collection", ->
   beforeEach (next) ->
     @db = mongo.db('test')
     @db.clear next
-
-  it "should support mixins", ->
-    @db.collection 'units',
-      alive: -> @count status: 'alive'
-    expect(@db.collection('units').alive).to.be.a 'function'
-    expect(@db.collection('other').alive).to.be undefined
 
   itSync "should create", ->
     units = @db.collection 'units'

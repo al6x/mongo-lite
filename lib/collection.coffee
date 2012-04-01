@@ -17,7 +17,7 @@ class Driver.Collection
     options = options[0] || {}
 
     # Adding default options.
-    options = helper.merge safe: Driver.safe, options
+    options = _.extend {safe: Driver.safe}, options
 
     # Generate custom id if specified.
     if !helper.getId(obj) and Driver.generateId
@@ -27,11 +27,13 @@ class Driver.Collection
     # Support for Model.
     doc = if obj.isModel then obj.toHash() else obj
 
+    # Logging.
+    @db.info "#{@name}.create #{util.inspect(doc)}, #{util.inspect(options)}"
+
     # Saving.
     @connect callback, (nCollection) =>
       mongoOptions = helper.cleanOptions options
       doc = helper.convertDocIdToMongo doc
-      @db.info "#{@name}.create #{util.inspect(doc)}, #{util.inspect(mongoOptions)}"
       nCollection.insert doc, mongoOptions, (err, result) =>
         doc = helper.convertDocIdToDriver doc
 
@@ -69,46 +71,46 @@ class Driver.Collection
     # Adding default options. Because :multi works only with $ operators,
     # we need to check if it's applicable.
     options = if _(_(doc).keys()).any((k) -> /^\$/.test(k))
-      helper.merge safe: Driver.safe, multi: Driver.multi, options
+      _.extend {safe: Driver.safe, multi: Driver.multi}, options
     else
-      helper.merge safe: Driver.safe, options
+      _.extend {safe: Driver.safe}, options
+
+    # Logging.
+    [ss, ds, os] = [util.inspect(selector), util.inspect(doc), util.inspect(options)]
+    @db.info "#{@name}.update #{ss}, #{ds}, #{os}"
 
     # Saving.
     @connect callback, (nCollection) =>
       mongoOptions = helper.cleanOptions options
       selector = helper.convertSelectorId selector
       doc = helper.convertDocIdToMongo doc
-      [ss, ds, os] = [util.inspect(selector), util.inspect(doc), util.inspect(mongoOptions)]
-      @db.info "#{@name}.update #{ss}, #{ds}, #{os}"
       nCollection.update selector, doc, mongoOptions, (args...) ->
         doc = helper.convertDocIdToDriver doc
         callback args...
 
-  delete: (args..., callback) ->
-    [first, second] = args
-    if first.isModel
-      id = helper.getId(first) || throw new Error "invalid arguments for update!"
-      [selector, options] = [{id: id}, (second || {})]
+  delete: (first, options..., callback) ->
+    options = options[0] || {}
+    selector = if first.isModel
+      id = helper.getId(first) || throw new Error "can't delete model without id!"
+      {id: id}
     else
-      [selector, options] = [first, (second || {})]
+      first
 
     # Adding default options.
-    options = helper.merge safe: Driver.safe, options
+    options = _.extend {safe: Driver.safe}, options
+
+    # Logging.
+    @db.info "#{@name}.delete #{util.inspect(selector)}, #{util.inspect(options)}"
 
     # Saving.
     @connect callback, (nCollection) =>
       mongoOptions = helper.cleanOptions options
       selector = helper.convertSelectorId selector
-      @db.info "#{@name}.delete #{util.inspect(selector)}, #{util.inspect(mongoOptions)}"
       nCollection.remove selector, mongoOptions, callback
 
   save: (obj, options..., callback) ->
-    throw new Error "callback required!" unless callback
-    options = options[0] || {}
-    if id = helper.getId(obj)
-      @update {_id: id}, obj, options, callback
-    else
-      @create obj, options, callback
+    method = if helper.getId(obj) then 'update' else 'create'
+    @[method] obj, options..., callback
 
   # I prefer names `create` and `delete`, but
   # You still can use `insert` and `remove`.

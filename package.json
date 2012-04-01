@@ -1,6 +1,6 @@
 {
   "name"         : "mongo-lite",
-  "main"         : "./lib/index",
+  "main"         : "./lib/mongo",
   "version"      : "0.1.1",
   "homepage"     : "http://alexeypetrushin.github.com/mongo-lite",
   "dependencies" : {

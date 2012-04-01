@@ -3,9 +3,6 @@ util   = require 'util'
 Driver = require './driver'
 
 module.exports =
-  merge: (to, from) ->
-    _(_(to).clone()).extend from
-
   safeParseInt: (v) ->
     v = v.toString() if _.isNumber v
     return null unless _.isString v

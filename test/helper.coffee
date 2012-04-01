@@ -1,28 +1,9 @@
 _      = require 'underscore'
-Driver = require '../lib/index'
-require '../lib/sync'
+Driver = require '../lib/mongo'
+sync = require '../lib/sync'
 
+global.itSync  = sync.itSync
 global.expect  = require 'expect.js'
 global.p = (args...) -> console.log args...
 
 Driver.Db.prototype.logger = null
-
-# Support for synchronous specs.
-global.itSync = (desc, callback) ->
-  try
-    require 'fibers'
-  catch e
-    console.log """
-      WARN:
-        You are trying to use synchronous mode.
-        Synchronous mode is optional and requires additional `fibers` library.
-        It seems that there's no such library in Your system.
-        Please install it with `npm install fibers`."""
-    throw e
-
-  it desc, (done) ->
-    that = @
-    Fiber(->
-      callback.apply that, [done]
-      done()
-    ).run()

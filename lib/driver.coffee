@@ -66,5 +66,6 @@ _(Driver).extend
       connection = @connect options.host, options.port, options.options
       name = options.name || alias
       db = connection.db name
+      db.alias = alias
       @databasesCache[alias] = db
     db

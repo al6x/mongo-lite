@@ -1,4 +1,4 @@
-Driver = require './index'
+Driver = require './mongo'
 util   = require 'util'
 _      = require 'underscore'
 
@@ -45,3 +45,23 @@ objects = [
 
 for [obj, methods] in objects
   synchronizeMethods obj, methods
+
+# Support for synchronous specs.
+exports.itSync = (desc, callback) ->
+  try
+    require 'fibers'
+  catch e
+    console.log """
+      WARN:
+        You are trying to use synchronous mode.
+        Synchronous mode is optional and requires additional `fibers` library.
+        It seems that there's no such library in Your system.
+        Please install it with `npm install fibers`."""
+    throw e
+
+  it desc, (done) ->
+    that = @
+    Fiber(->
+      callback.apply that, [done]
+      done()
+    ).run()

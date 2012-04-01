@@ -4,28 +4,13 @@ Driver  = require './driver'
 
 class Driver.Db
   constructor: (@name, @connection, @options = {}) ->
-    @collectionMixins = {}
 
   # Override it with custom implementation or set to `null` to disable.
   logger: console
+  info: (msg) -> @logger?.info "  DB: #{@alias || @name}.#{msg}"
 
-  info: (msg) -> @logger?.info "#{@name}.#{msg}"
-
-  collection: (name, arg) ->
-    throw new Error "should be used without callback!" if _.isFunction(arg)
-    if arg and _(arg).any((v) -> _.isFunction(v))
-      @registerCollectionMixin name, arg
-    else
-      @getCollection name, arg
-
-  registerCollectionMixin: (name, mixin) ->
-    _(@collectionMixins[name] ?= {}).extend mixin
-
-  getCollection: (name, options = {}) ->
-    collection = new Driver.Collection name, options, @
-    mixin = @collectionMixins[name] || {}
-    _(collection).extend mixin
-    collection
+  collection: (name, options = {}) ->
+    new Driver.Collection name, options, @
 
   close: ->
     if @_nDb

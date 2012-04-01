@@ -8,8 +8,8 @@ class Driver.Cursor
   constructor: (@collection, @selector = {}, @options = {}) ->
 
   find: (selector = {}, options = {}) ->
-    selector = helper.merge @selector, selector
-    options = helper.merge @options, options
+    selector = _.extend {}, @selector, selector
+    options = _.extend {}, @options, options
     new @constructor @collection, selector, options
 
   # Get first document.
@@ -23,7 +23,7 @@ class Driver.Cursor
   first: (args..., callback) ->
     throw new Error "callback required!" unless callback
     [selector, options] = [(args[0] || {}), (args[1] || {})]
-    options = helper.merge options, limit: 1
+    options = _.extend {}, options, limit: 1
     @all selector, options, (err, docs) ->
       doc = docs[0] || null unless err
       callback err, doc
@@ -84,11 +84,14 @@ class Driver.Cursor
     if @nCursor
       @_next callback
     else
+      # Logging
+      msg = "#{@collection.name}.find #{util.inspect(@selector)}, #{util.inspect(@options)}"
+      @collection.db.info msg
+
+      # Querying.
       @collection.connect callback, (nCollection) =>
         options = helper.cleanOptions @options
         selector = helper.convertSelectorId @selector
-        msg = "#{@collection.name}.find #{util.inspect(selector)}, #{util.inspect(options)}"
-        @collection.db.info msg
         @nCursor ?= nCollection.find selector, options
         @_next callback
 
@@ -123,9 +126,9 @@ class Driver.Cursor
     if args.length > 0
       @find(args...).count callback
     else
+      @collection.db.info "#{@collection.name}.count #{util.inspect(@selector)}"
       @collection.connect callback, (nCollection) =>
         selector = helper.convertSelectorId @selector
-        @collection.db.info "#{@collection.name}.count #{util.inspect(selector)}"
         nCollection.count selector, callback
 
   # CRUD.
