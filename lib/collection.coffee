@@ -25,7 +25,7 @@ class Driver.Collection
       helper.setId obj, helper.generateId()
 
     # Support for Model.
-    doc = if obj.isModel then obj.toHash() else obj
+    doc = if obj.isModel then obj.toMongo() else obj
 
     # Logging.
     @db.info "#{@name}.create #{util.inspect(doc)}, #{util.inspect(options)}"
@@ -66,7 +66,7 @@ class Driver.Collection
     throw new Error "data object for update not provided!" unless obj
 
     # Support for Model.
-    doc = if obj.isModel then obj.toHash() else obj
+    doc = if obj.isModel then obj.toMongo() else obj
 
     # Adding default options. Because :multi works only with $ operators,
     # we need to check if it's applicable.

@@ -50,4 +50,4 @@ class Driver.Db
   connect: (callback, next) ->
     @connection.connectToDb @name, @options, callback, next
 
-  info: (msg) -> @logger?.info "  DB: #{@alias || @name}.#{msg}"
+  info: (msg) -> Driver.logger?.info "  DB: #{@alias || @name}.#{msg}"

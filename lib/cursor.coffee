@@ -104,7 +104,7 @@ class Driver.Cursor
         obj = if that.options.raw == true
           doc
         else
-          Driver.fromHash doc
+          Driver.fromMongo doc
         callback err, obj
       else
         that.nCursor = null
@@ -139,7 +139,6 @@ class Driver.Cursor
     else
       selector = helper.convertSelectorId @selector
       @collection.delete selector, @options, callback
-
 
   # Helpers.
 

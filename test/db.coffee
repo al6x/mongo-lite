@@ -11,14 +11,14 @@ describe "Database", ->
     expect(@db.collection('test').name).to.eql 'test'
 
   itSync "should list collection names", (done) ->
-    @db.collection('alpha').create a: 'b'
-    expect(@db.collectionNames()).to.contain 'alpha'
+    sync(@db.collection('alpha'), 'create')(a: 'b')
+    expect(sync(@db, 'collectionNames')()).to.contain 'alpha'
 
   itSync "should clear", ->
-    @db.collection('alpha').insert a: 'b'
-    expect(@db.collectionNames()).to.contain 'alpha'
-    @db.clear()
-    expect(@db.collectionNames()).not.to.contain 'alpha'
+    sync(@db.collection('alpha'), 'insert')(a: 'b')
+    expect(sync(@db, 'collectionNames')()).to.contain 'alpha'
+    sync(@db, 'clear')()
+    expect(sync(@db, 'collectionNames')()).not.to.contain 'alpha'
 
 describe "Database Configuration", ->
   beforeEach (next) ->

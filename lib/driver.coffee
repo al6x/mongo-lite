@@ -37,7 +37,7 @@ _(Driver).extend
   connect: (args...) -> new Driver.Connection(args...)
 
   # Override to provide other unmarshalling behavior.
-  fromHash: (doc) -> doc
+  fromMongo: (doc) -> doc
 
   # Get database by alias, by using connection setting defined in options.
   # It cache database and returns the same for the next calls.
