@@ -8,6 +8,6 @@ Driver.logger = null
 
 sync = require 'synchronize'
 require '../lib/synchronize'
-global.itPsync = (desc, callback) ->
+global.it_ = (desc, callback) ->
   it desc, (done) ->
     sync.fiber callback.bind(@), done
