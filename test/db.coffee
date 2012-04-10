@@ -10,15 +10,15 @@ describe "Database", ->
   it "should provide handy shortcuts for collections", ->
     expect(@db.collection('test').name).to.eql 'test'
 
-  itSync "should list collection names", (done) ->
-    sync(@db.collection('alpha'), 'create')(a: 'b')
-    expect(sync(@db, 'collectionNames')()).to.contain 'alpha'
+  itPsync "should list collection names", (done) ->
+    @db.collection('alpha').createPsync a: 'b'
+    expect(@db.collectionNamesPsync()).to.contain 'alpha'
 
-  itSync "should clear", ->
-    sync(@db.collection('alpha'), 'insert')(a: 'b')
-    expect(sync(@db, 'collectionNames')()).to.contain 'alpha'
-    sync(@db, 'clear')()
-    expect(sync(@db, 'collectionNames')()).not.to.contain 'alpha'
+  itPsync "should clear", ->
+    @db.collection('alpha').createPsync a: 'b'
+    expect(@db.collectionNamesPsync()).to.contain 'alpha'
+    @db.clearPsync()
+    expect(@db.collectionNamesPsync()).not.to.contain 'alpha'
 
 describe "Database Configuration", ->
   beforeEach (next) ->
@@ -29,7 +29,7 @@ describe "Database Configuration", ->
   beforeEach -> oldOptions = _(mongo.options).clone()
   afterEach  -> mongo.options = oldOptions
 
-  itSync "should use config and get databases by alias", ->
+  itPsync "should use config and get databases by alias", ->
     config =
       databases:
         mytest:

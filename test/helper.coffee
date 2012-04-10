@@ -6,7 +6,8 @@ global.p = (args...) -> console.log args...
 
 Driver.logger = null
 
-global.sync = require 'synchronize'
-global.itSync = (desc, callback) ->
+sync = require 'synchronize'
+require '../lib/synchronize'
+global.itPsync = (desc, callback) ->
   it desc, (done) ->
     sync.fiber callback.bind(@), done

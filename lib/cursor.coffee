@@ -121,6 +121,7 @@ class Driver.Cursor
       throw new Error "cursor #{util.inspect @selector} already closed!"
     @nCursor.close()
     @nCursor = null
+    callback()
 
   count: (args..., callback) ->
     if args.length > 0
