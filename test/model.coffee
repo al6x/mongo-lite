@@ -38,7 +38,7 @@ describe "Integration with Model", ->
       units.create_(unit)
       expect(units.first_(name: 'Probe').attrs.status).to.be 'alive'
       unit.attrs.status = 'dead'
-      units.update_({id: unit.id}, unit)
+      units.update_(unit)
       expect(units.first_(name: 'Probe').attrs.status).to.be 'dead'
       expect(units.count_()).to.be 1
 

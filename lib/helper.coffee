@@ -33,7 +33,7 @@ module.exports =
   convertSelectorId: (selector) ->
     if Driver.convertId
       selector = _(selector).clone()
-      if selector.id
+      if 'id' of selector
         selector._id = selector.id
         delete selector.id
       selector
@@ -41,14 +41,14 @@ module.exports =
       selector
 
   convertDocIdToMongo: (hash) ->
-    if Driver.convertId
-      hash._id = hash.id if hash.id?
+    if Driver.convertId and ('id' of hash)
+      hash._id = hash.id
       delete hash.id
     hash
 
   convertDocIdToDriver: (hash) ->
-    if Driver.convertId
-      hash.id = hash._id if hash._id?
+    if Driver.convertId and ('_id' of hash)
+      hash.id = hash._id
       delete hash._id
     hash
 
