@@ -16,7 +16,7 @@ Model = class Model
   addError: (errors) ->
     _(@errors).extend errors
 
-mongo.fromMongo = (doc) ->
+mongo.fromMongo = (doc, collection) ->
   if doc._class == 'Model' then new Model(doc) else doc
 
 describe "Integration with Model", ->

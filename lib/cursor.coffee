@@ -97,14 +97,14 @@ class Driver.Cursor
 
   _next: (callback) ->
     that = @
-    @nCursor.nextObject (err, doc) ->
+    @nCursor.nextObject (err, doc) =>
       return callback err if err
       if doc
         doc = helper.convertDocIdToDriver doc
         obj = if that.options.raw == true
           doc
         else
-          Driver.fromMongo doc
+          Driver.fromMongo doc, @collection
         callback err, obj
       else
         that.nCursor = null

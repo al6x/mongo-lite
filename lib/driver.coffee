@@ -36,8 +36,11 @@ _(Driver).extend
   # Handy shortcut to create Connection.
   connect: (args...) -> new Driver.Connection(args...)
 
-  # Override to provide other unmarshalling behavior.
-  fromMongo: (doc) -> doc
+  # Override this to provide other unmarshalling behavior.
+  # You can use information in doc itself (like `_class` attribute) or
+  # information in `collection` to infer document class, or just
+  # return raw document.
+  fromMongo: (doc, collection) -> doc
 
   # Get database by alias, by using connection setting defined in options.
   # It cache database and returns the same for the next calls.
