@@ -88,13 +88,14 @@ class Driver.Collection
         doc = helper.convertDocIdToDriver doc
         callback args...
 
-  delete: (first, options..., callback) ->
-    options = options[0] || {}
+  delete: (args..., callback) ->
+    [first, second] = args
     selector = if first.isModel
       id = helper.getId(first) || throw new Error "can't delete model without id!"
       {id: id}
     else
       first
+    options = second || {}
 
     # Adding default options.
     options = _.extend {safe: Driver.safe}, options
