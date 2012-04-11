@@ -90,11 +90,12 @@ class Driver.Collection
 
   delete: (args..., callback) ->
     [first, second] = args
-    selector = if first.isModel
+    selector = if first?.isModel
       id = helper.getId(first) || throw new Error "can't delete model without id!"
       {id: id}
     else
       first
+    selector ?= {}
     options = second || {}
 
     # Adding default options.
