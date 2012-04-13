@@ -38,8 +38,8 @@ _(Driver).extend
 
   # Override this to provide other unmarshalling behavior.
   # You can use information in doc itself (like `_class` attribute) or
-  # information in `collection` to infer document class, or just
-  # return raw document.
+  # information in `collection` (like `collection.options.class`) to infer
+  # document class, or just return raw document.
   fromMongo: (doc, collection) -> doc
 
   # Get database by alias, by using connection setting defined in options.
