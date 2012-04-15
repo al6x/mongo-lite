@@ -1,16 +1,11 @@
 mongo = require 'mongo-lite'
-sync  = require 'synchronize'
+flow  = require 'control-flow'
 
-for method in ['clear', 'collectionNames']
-  mongo.Db.prototype["#{method}_"] = sync mongo.Db.prototype[method]
+flow.sync mongo.Db.prototype, 'clear', 'collectionNames'
 
-methods = [
+flow.sync mongo.Collection.prototype,
   'drop',
-  'create', 'update', 'delete', 'save', 'ensureIndex', 'dropIndex', 'insert', 'remove',
+  'create', 'update', 'delete', 'save', 'ensureIndex', 'dropIndex',
   'first', 'all', 'next', 'close', 'count'
-]
-for method in methods
-  mongo.Collection.prototype["#{method}_"] = sync mongo.Collection.prototype[method]
 
-for method in ['first', 'all', 'next', 'close', 'count', 'delete']
-  mongo.Cursor.prototype["#{method}_"] = sync mongo.Cursor.prototype[method]
+flow.sync mongo.Cursor.prototype, 'first', 'all', 'next', 'close', 'count', 'delete'

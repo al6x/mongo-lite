@@ -93,11 +93,6 @@ class Driver.Collection
     else
       @create doc, options..., callback
 
-  # I prefer names `create` and `delete`, but
-  # You still can use `insert` and `remove`.
-  insert: (args...) -> @create args...
-  remove: (args...) -> @delete args...
-
   # Querying.
 
   cursor: (args...) -> new Driver.Cursor @, args...

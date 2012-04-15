@@ -10,15 +10,15 @@ describe "Database", ->
   it "should provide handy shortcuts for collections", ->
     expect(@db.collection('test').name).to.eql 'test'
 
-  it_ "should list collection names", (done) ->
-    @db.collection('alpha').create_ a: 'b'
-    expect(@db.collectionNames_()).to.contain 'alpha'
+  flow.it "should list collection names", (done) ->
+    @db.collection('alpha').create a: 'b'
+    expect(@db.collectionNames()).to.contain 'alpha'
 
-  it_ "should clear", ->
-    @db.collection('alpha').create_ a: 'b'
-    expect(@db.collectionNames_()).to.contain 'alpha'
-    @db.clear_()
-    expect(@db.collectionNames_()).not.to.contain 'alpha'
+  flow.it "should clear", ->
+    @db.collection('alpha').create a: 'b'
+    expect(@db.collectionNames()).to.contain 'alpha'
+    @db.clear()
+    expect(@db.collectionNames()).not.to.contain 'alpha'
 
 describe "Database Configuration", ->
   beforeEach (next) ->
@@ -29,7 +29,7 @@ describe "Database Configuration", ->
   beforeEach -> oldOptions = _(mongo.options).clone()
   afterEach  -> mongo.options = oldOptions
 
-  it_ "should use config and get databases by alias", ->
+  flow.it "should use config and get databases by alias", ->
     mongo.configure
       mytest:
         name: 'test'
