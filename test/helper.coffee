@@ -1,10 +1,12 @@
 _      = require 'underscore'
-Driver = require '../lib/mongo'
+mongo = require '../lib/driver'
+
+mongo.useHandyButNotStandardDefaults()
 
 global.expect  = require 'expect.js'
 global.p = (args...) -> console.log args...
 
-Driver.logger = null
+mongo.logger = null
 
 sync = require 'synchronize'
 require '../lib/synchronize'

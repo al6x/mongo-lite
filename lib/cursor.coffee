@@ -85,14 +85,14 @@ class Driver.Cursor
       @_next callback
     else
       # Logging
-      msg = "#{@collection.name}.find #{util.inspect(@selector)}, #{util.inspect(@options)}"
-      @collection.db.info msg
+      @collection.db.log
+        info: "#{@collection.name}.find #{util.inspect(@selector)}, #{util.inspect(@options)}"
 
       # Querying.
       @collection.connect callback, (nCollection) =>
-        options = helper.cleanOptions @options
+        # options = helper.cleanOptions @options
         selector = helper.convertSelectorId @selector
-        @nCursor ?= nCollection.find selector, options
+        @nCursor ?= nCollection.find selector, @options
         @_next callback
 
   _next: (callback) ->
@@ -101,11 +101,7 @@ class Driver.Cursor
       return callback err if err
       if doc
         doc = helper.convertDocIdToDriver doc
-        obj = if that.options.raw == true
-          doc
-        else
-          Driver.fromMongo doc, @collection
-        callback err, obj
+        callback err, doc
       else
         that.nCursor = null
         callback err, null
@@ -127,7 +123,7 @@ class Driver.Cursor
     if args.length > 0
       @find(args...).count callback
     else
-      @collection.db.info "#{@collection.name}.count #{util.inspect(@selector)}"
+      @collection.db.log info: "#{@collection.name}.count #{util.inspect(@selector)}"
       @collection.connect callback, (nCollection) =>
         selector = helper.convertSelectorId @selector
         nCollection.count selector, callback
@@ -154,8 +150,8 @@ class Driver.Cursor
       page = helper.safeParseInt options.page
       perPage = helper.safeParseInt options.perPage
     page ?= 1
-    perPage ?= Driver.perPage
-    perPage = Driver.maxPerPage if perPage > Driver.maxPerPage
+    perPage ?= Driver.extendedOptions.perPage
+    perPage = Driver.extendedOptions.maxPerPage if perPage > Driver.extendedOptions.maxPerPage
     @skip((page - 1) * perPage).limit(perPage)
 
   snapshot: -> @find {}, snapshot: true

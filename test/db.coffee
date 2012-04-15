@@ -1,5 +1,5 @@
 require './helper'
-mongo = require '../lib/mongo'
+mongo = require '../lib/driver'
 _     = require 'underscore'
 
 describe "Database", ->
@@ -30,11 +30,9 @@ describe "Database Configuration", ->
   afterEach  -> mongo.options = oldOptions
 
   it_ "should use config and get databases by alias", ->
-    config =
-      databases:
-        mytest:
-          name: 'test'
-    mongo.configure config
+    mongo.configure
+      mytest:
+        name: 'test'
 
     try
       db = mongo.db('mytest')

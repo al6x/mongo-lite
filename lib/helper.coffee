@@ -2,36 +2,28 @@ _      = require 'underscore'
 util   = require 'util'
 Driver = require './driver'
 
-module.exports =
+module.exports = Driver.helper =
   safeParseInt: (v) ->
     v = v.toString() if _.isNumber v
     return null unless _.isString v
-    return null if v.length > 20
+    return null if v.length > 100
     return null unless v.length > 0
     parseInt v
 
-  cleanOptions: (options) ->
-    list = ['db', 'collection', 'raw', 'validate', 'callbacks', 'cache']
-    options = _(options).clone()
-    delete options[option] for option in list
-    options
+  # cleanOptions: (options) ->
+  #   list = ['db', 'collection', 'raw', 'validate', 'callbacks', 'cache']
+  #   options = _(options).clone()
+  #   delete options[option] for option in list
+  #   options
 
-  clear: (obj) -> delete obj[k] for own k, v of obj
+  getId: (doc) ->
+    if Driver.extendedOptions.convertId then doc.id else doc._id
 
-  getId: (obj) ->
-    if obj.isModel
-      obj.getId()
-    else
-      if Driver.convertId then obj.id else obj._id
-
-  setId: (obj, id) ->
-    if obj.isModel
-      obj.setId(id)
-    else
-      if Driver.convertId then obj.id = id else obj._id = id
+  setId: (doc, id) ->
+    if Driver.extendedOptions.convertId then doc.id = id else doc._id = id
 
   convertSelectorId: (selector) ->
-    if Driver.convertId
+    if Driver.extendedOptions.convertId
       selector = _(selector).clone()
       if 'id' of selector
         selector._id = selector.id
@@ -41,13 +33,13 @@ module.exports =
       selector
 
   convertDocIdToMongo: (hash) ->
-    if Driver.convertId and ('id' of hash)
+    if Driver.extendedOptions.convertId and ('id' of hash)
       hash._id = hash.id
       delete hash.id
     hash
 
   convertDocIdToDriver: (hash) ->
-    if Driver.convertId and ('_id' of hash)
+    if Driver.extendedOptions.convertId and ('_id' of hash)
       hash.id = hash._id
       delete hash._id
     hash

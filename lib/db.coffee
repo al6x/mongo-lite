@@ -8,15 +8,16 @@ class Driver.Db
   collection: (name, options = {}) ->
     new Driver.Collection name, options, @
 
-  close: ->
+  close: (callback) ->
     if @_nDb
       @_nDb.close()
       @_nDb = undefined
+    callback?()
 
   collectionNames: (options..., callback) ->
     options = options[0] || {}
     that = @
-    @info "collectionNames"
+    @log info: "collectionNames"
     @connect callback, (nDb) ->
       nDb.collectionNames (err, names) ->
         names = _(names).map (obj) -> obj.name.replace("#{that.name}.", '') unless err
@@ -26,7 +27,7 @@ class Driver.Db
     throw new Error "callback required!" unless callback
     options = options[0] || {}
 
-    @info "clear"
+    @log info: "clear"
     @collectionNames options, (err, names) =>
       return callback err if err
       names = _(names).select((name) -> !/^system\./.test(name))
@@ -50,4 +51,6 @@ class Driver.Db
   connect: (callback, next) ->
     @connection.connectToDb @name, @options, callback, next
 
-  info: (msg) -> Driver.logger?.info "  DB: #{@alias || @name}.#{msg}"
+  log: (msgs) ->
+    for type, msg of msgs
+      Driver.logger?[type] "        db: #{@alias || @name}.#{msg}"

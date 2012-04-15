@@ -2,5 +2,17 @@
 
 # Tasks
 
-- make callbacks optional
-- add ability to set class on collection
+- Move logging to Command
+
++ add ability to set class on collection
+
+
+# Shell commands
+
+getDatabaseNames database
+
+getCollectionNames dropDatabase eval createCollection stats name
+
+ensureIndex getIndexes dropIndex find findOne findAndModify mapReduce remove renameCollection save stats update insert drop
+
+count limit skip sort group size explain hint forEach map hasNext next
