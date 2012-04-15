@@ -6,14 +6,14 @@ describe "Collection", ->
     @db = mongo.db('test')
     @db.clear next
 
-  flow.it "should create", ->
+  sync.it "should create", ->
     units = @db.collection 'units'
     unit = name: 'Probe',  status: 'alive'
     expect(units.create(unit)).not.to.be undefined
     expect(unit.id).to.be.a 'string'
     expect(units.first(name: 'Probe').status).to.eql 'alive'
 
-  flow.it "should update", ->
+  sync.it "should update", ->
     units = @db.collection 'units'
     unit = name: 'Probe',  status: 'alive'
     units.create unit
@@ -23,19 +23,19 @@ describe "Collection", ->
     expect(units.first(name: 'Probe').status).to.be 'dead'
     expect(units.count()).to.be 1
 
-  flow.it "should update in-place", ->
+  sync.it "should update in-place", ->
     units = @db.collection 'units'
     units.create name: 'Probe',  status: 'alive'
     expect(units.update({name: 'Probe'}, $set: {status: 'dead'})).to.be 1
     expect(units.first(name: 'Probe').status).to.be 'dead'
 
-  flow.it "should delete", ->
+  sync.it "should delete", ->
     units = @db.collection 'units'
     units.create name: 'Probe',  status: 'alive'
     expect(units.delete(name: 'Probe')).to.be 1
     expect(units.count(name: 'Probe')).to.be 0
 
-  flow.it "should update all matched by criteria (not just first as default in mongo)", ->
+  sync.it "should update all matched by criteria (not just first as default in mongo)", ->
     units = @db.collection 'units'
     units.save name: 'Probe',  race: 'Protoss', status: 'alive'
     units.save name: 'Zealot', race: 'Protoss', status: 'alive'
@@ -44,7 +44,7 @@ describe "Collection", ->
     units.delete race: 'Protoss'
     expect(units.count()).to.be 0
 
-  flow.it "should use short string id (instead of BSON::ObjectId as default in mongo)", ->
+  sync.it "should use short string id (instead of BSON::ObjectId as default in mongo)", ->
     units = @db.collection 'units'
     unit = name: 'Probe',  status: 'alive'
     units.create unit

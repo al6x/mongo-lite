@@ -8,8 +8,8 @@ global.p = (args...) -> console.log args...
 
 mongo.logger = null
 
-global.flow = require 'control-flow'
+global.sync = require 'synchronize'
 require '../lib/synchronize'
-flow.it = (desc, callback) ->
+sync.it = (desc, callback) ->
   it desc, (done) ->
-    flow.fiber callback.bind(@), done
+    sync.fiber callback.bind(@), done
