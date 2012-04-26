@@ -1,3 +1,5 @@
+# Pseudo synchronous mode, optional, requires external `synchronize` library.
+
 mongo = require 'mongo-lite'
 sync  = require 'synchronize'
 

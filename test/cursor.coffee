@@ -3,7 +3,7 @@ mongo = require '../lib/driver'
 
 describe "Cursor", ->
   beforeEach (next) ->
-    @db = mongo.db('test')
+    @db = mongo.connect().db('test')
     @db.clear next
 
   sync.it "should return first element", ->

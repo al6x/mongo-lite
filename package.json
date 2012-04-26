@@ -1,7 +1,7 @@
 {
   "name"         : "mongo-lite",
   "main"         : "./lib/driver",
-  "version"      : "0.1.4",
+  "version"      : "0.2.0",
   "homepage"     : "http://alexeypetrushin.github.com/mongo-lite",
   "dependencies" : {
     "mongodb"    : "0.9.x",
@@ -13,5 +13,9 @@
     "name" : "Alexey Petrushin",
     "url"  : "http://petrush.in"
   },
-  "license"      : "MIT"
+  "license"      : "MIT",
+  "scripts" : {
+    "prepublish"  : "cake compile",
+    "postpublish" : "cake clear"
+  }
 }

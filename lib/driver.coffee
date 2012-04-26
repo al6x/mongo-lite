@@ -40,43 +40,8 @@ _(Driver).extend
     _(@options).extend safe: true, multi: true
     _(@extendedOptions).extend generateId: true, convertId: true
 
-  # Shortcut for Connection.
-  connect: (args...) ->
-    new Driver.Connection(args...)
-
-  # Shortcut for configuring.
-  configure: (config) ->
-    _(@config ?= {}).extend config
-
-  # Get database by alias, by using connection setting defined in options.
-  # It cache database and returns the same for the next calls.
-  #
-  # Sample:
-  #
-  # Define Your setting.
-  #
-  #   Driver.configure({
-  #     blog:
-  #       name: "blog_production"
-  #     default:
-  #       name: "default_production"
-  #       host: "localhost"
-  #   })
-  #
-  # And now You can use database alias to get the actual database.
-  #
-  #   db = mongo.db 'blog'
-  #
-  db: (alias = 'default') ->
-    @databasesCache ?= {}
-    unless db = @databasesCache[alias]
-      options = @config?[alias] || {}
-      connection = @connect options.host, options.port, options.options
-      name = options.name || alias
-      db = connection.db name
-      db.alias = alias
-      @databasesCache[alias] = db
-    db
+  # Connect to mongo using mongo url `mongodb://username:password@host:port`
+  connect: (url) -> new Driver.Connection(url)
 
   # Override with custom logger or set to `null` to disable.
   logger: console

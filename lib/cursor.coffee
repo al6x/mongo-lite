@@ -2,6 +2,7 @@ _       = require 'underscore'
 util    = require 'util'
 helper  = require './helper'
 Driver  = require './driver'
+NDriver = require 'mongodb'
 
 Model = null
 class Driver.Cursor
@@ -89,7 +90,7 @@ class Driver.Cursor
         info: "#{@collection.name}.find #{util.inspect(@selector)}, #{util.inspect(@options)}"
 
       # Querying.
-      @collection.connect callback, (nCollection) =>
+      @collection.getNative callback, (nCollection) =>
         # options = helper.cleanOptions @options
         selector = helper.convertSelectorId @selector
         @nCursor ?= nCollection.find selector, @options
@@ -124,7 +125,7 @@ class Driver.Cursor
       @find(args...).count callback
     else
       @collection.db.log info: "#{@collection.name}.count #{util.inspect(@selector)}"
-      @collection.connect callback, (nCollection) =>
+      @collection.getNative callback, (nCollection) =>
         selector = helper.convertSelectorId @selector
         nCollection.count selector, callback
 
@@ -163,3 +164,15 @@ class Driver.Cursor
   explain: (arg) -> @find {}, explain: arg
   fields: (arg) -> @find {}, fields: arg
   timeout: (arg) -> @find {}, timeout: arg
+
+# Making methods of native cursor available.
+dummy = ->
+proto = Driver.Cursor.prototype
+nativeProto = NDriver.Cursor.prototype
+for name, v of nativeProto when !proto[name] and _.isFunction(v)
+  do (name) ->
+    proto[name] = (args...) ->
+      @db.log info: "#{@collection.name}.#{name} #{util.inspect(args)}"
+      callback = if _.isFunction(args[args.length - 1]) then args[args.length - 1] else dummy
+      @getNative callback, (nCursor) ->
+        nCursor[name] args...

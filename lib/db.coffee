@@ -18,7 +18,7 @@ class Driver.Db
     options = options[0] || {}
     that = @
     @log info: "collectionNames"
-    @connect callback, (nDb) ->
+    @getNative callback, (nDb) ->
       nDb.collectionNames (err, names) ->
         names = _(names).map (obj) -> obj.name.replace("#{that.name}.", '') unless err
         callback err, names
@@ -38,7 +38,7 @@ class Driver.Db
         else
           name = names[counter]
           counter += 1
-          @connect callback, (nDb) ->
+          @getNative callback, (nDb) ->
             nDb.collection name, options, (err, nCollection) =>
               return callback err if err
               nCollection.drop (err) ->
@@ -48,9 +48,21 @@ class Driver.Db
       drop()
 
   # Allows to defer actuall connection.
-  connect: (callback, next) ->
-    @connection.connectToDb @name, @options, callback, next
+  getNative: (callback, next) ->
+    @connection.getNativeDb @name, @options, callback, next
 
   log: (msgs) ->
     for type, msg of msgs
       Driver.logger?[type] "        db: #{@alias || @name}.#{msg}"
+
+# Making methods of native cursor available.
+dummy = ->
+proto = Driver.Db.prototype
+nativeProto = NDriver.Db.prototype
+for name, v of nativeProto when !proto[name] and _.isFunction(v)
+  do (name) ->
+    proto[name] = (args...) ->
+      @db.log info: "#{name} #{util.inspect(args)}"
+      callback = if _.isFunction(args[args.length - 1]) then args[args.length - 1] else dummy
+      @getNative callback, (nCursor) ->
+        nCursor[name] args...

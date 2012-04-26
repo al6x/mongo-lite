@@ -10,12 +10,6 @@ module.exports = Driver.helper =
     return null unless v.length > 0
     parseInt v
 
-  # cleanOptions: (options) ->
-  #   list = ['db', 'collection', 'raw', 'validate', 'callbacks', 'cache']
-  #   options = _(options).clone()
-  #   delete options[option] for option in list
-  #   options
-
   getId: (doc) ->
     if Driver.extendedOptions.convertId then doc.id else doc._id
 
@@ -53,3 +47,19 @@ module.exports = Driver.helper =
       rand = Math.floor(Math.random() * @idSymbols.length)
       id += @idSymbols[rand]
     id
+
+  parseMongoUrl: (arg = {}) ->
+    if _.isObject arg
+      arg.host ?= '127.0.0.1'
+      arg.port ?= 27017
+      opts = arg
+    else
+      match = arg.match /(?:mongodb:\/\/)?(?:(.+):(.+)@)?(?:([^:]+)(?::(\d+))?\/)?(.+)/
+      opts =
+        username : match[1]
+        password : match[2]
+        host     : match[3] || '127.0.0.1'
+        port     : parseInt(match[4] || 27017,10)
+        db       : match[5]
+    opts.options ?= {auto_reconnect:true}
+    opts

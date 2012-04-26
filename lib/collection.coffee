@@ -1,17 +1,12 @@
 _       = require 'underscore'
 helper  = require './helper'
+NDriver = require 'mongodb'
 Driver  = require './driver'
 util    = require 'util'
 
-# Integration with Model.
+# Collection.
 class Driver.Collection
   constructor: (@name, @options, @db) ->
-
-  # Drop whole collection.
-  drop: (callback) ->
-    @connect callback, (nCollection) =>
-      @db.log info: "drop #{@name}"
-      nCollection.drop callback
 
   # Create document in collection.
   create: (doc, options..., callback) ->
@@ -28,7 +23,7 @@ class Driver.Collection
     @db.log info: "#{@name}.create #{util.inspect(doc)}, #{util.inspect(options)}"
 
     # Saving.
-    @connect callback, (nCollection) =>
+    @getNative callback, (nCollection) =>
       # mongoOptions = helper.cleanOptions options
       doc = helper.convertDocIdToMongo doc
       nCollection.insert doc, options, (err, result) =>
@@ -59,7 +54,7 @@ class Driver.Collection
     @db.log info: "#{@name}.update #{ss}, #{ds}, #{os}"
 
     # Saving.
-    @connect callback, (nCollection) =>
+    @getNative callback, (nCollection) =>
       # mongoOptions = helper.cleanOptions options
       selector = helper.convertSelectorId selector
       doc = helper.convertDocIdToMongo doc
@@ -79,7 +74,7 @@ class Driver.Collection
     @db.log info: "#{@name}.delete #{util.inspect(selector)}, #{util.inspect(options)}"
 
     # Saving.
-    @connect callback, (nCollection) =>
+    @getNative callback, (nCollection) =>
       # mongoOptions = helper.cleanOptions options
       selector = helper.convertSelectorId selector
       nCollection.remove selector, options, callback
@@ -93,28 +88,13 @@ class Driver.Collection
     else
       @create doc, options..., callback
 
-  # Querying.
-
+  # Querying, get cursor.
   cursor: (args...) -> new Driver.Cursor @, args...
-
   find: (args...) -> @cursor args...
 
-  # Indexes.
-
-  ensureIndex: (args..., callback) ->
-    @db.log info: "#{@name}.ensureIndex #{util.inspect(args)}"
-    @connect callback, (nCollection) ->
-      args.push callback
-      nCollection.ensureIndex args...
-
-  dropIndex: (args..., callback) ->
-    @db.log info: "#{@name}.dropIndex #{util.inspect(args)}"
-    @connect callback, (nCollection) ->
-      args.push callback
-      nCollection.dropIndex args...
-
-  connect: (callback, next) ->
-    @db.connection.connectToCollection @db.name, @db.options, @name, @options, callback, next
+  #
+  getNative: (callback, next) ->
+    @db.connection.getNativeCollection @db.name, @db.options, @name, @options, callback, next
 
 # Making cursor's methods available directly on collection.
 methods = [
@@ -123,7 +103,19 @@ methods = [
   'limit', 'skip', 'sort', 'paginate', 'snapshot', 'fields', 'tailable',
   'batchSize', 'fields', 'hint', 'explain', 'timeout'
 ]
-for method in methods
-  do (method) ->
-    Driver.Collection.prototype[method] = (args...) ->
-      @cursor()[method] args...
+proto = Driver.Collection.prototype
+for name in methods
+  do (name) ->
+    proto[name] = (args...) -> @cursor()[name] args...
+
+
+# Making methods of native collection available.
+dummy = ->
+nativeProto = NDriver.Collection.prototype
+for name, v of nativeProto when !proto[name] and _.isFunction(v)
+  do (name) ->
+    proto[name] = (args...) ->
+      @db.log info: "#{@name}.#{name} #{util.inspect(args)}"
+      callback = if _.isFunction(args[args.length - 1]) then args[args.length - 1] else dummy
+      @getNative callback, (nCollection) ->
+        nCollection[name] args...
