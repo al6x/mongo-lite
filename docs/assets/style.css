@@ -1,0 +1,31 @@
+body {
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+pre.prettyprint {
+  margin-bottom: 0.5em;
+  font-family: Monaco, Consolas, "Lucida Console", monospace !important;
+}
+
+h2 {
+  margin-top: 0.7em;
+  margin-bottom: 0.7em;
+}
+
+span.code {
+  white-space: nowrap;
+  font-family: Monaco, Consolas, "Lucida Console", monospace;
+}
+
+b.header {
+  font-weight: bold;
+  font-size: 1.4em;
+  margin-right: 1em;
+  margin-bottom: 0.5em;
+  display: inline-block;
+}
+
+.section {
+  margin-bottom: 1.4em;
+}

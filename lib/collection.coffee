@@ -7,10 +7,7 @@ Driver  = require './driver'
 class Driver.Collection
   constructor: (@name, @options, @db) ->
 
-  # Create document in collection.
-  #
-  # - `create(doc, callback)`
-  # - `create(doc, options, callback)`
+  # Create document in collection, `create(doc, [options], callback)`.
   create: (doc, options..., callback) ->
     options = options[0] || {}
 
@@ -39,10 +36,7 @@ class Driver.Collection
 
         callback err, result
 
-  # Update document.
-  #
-  # - `update(selector, doc, callback)`
-  # - `update(selector, doc, options, callback)`
+  # Update document `update(selector, doc, [options], callback)`.
   update: (selector, doc, options..., callback) ->
     options = options[0] || {}
     throw new Error "document for update not provided!" unless doc
@@ -68,10 +62,7 @@ class Driver.Collection
         doc = helper.convertDocIdToDriver doc
         callback args...
 
-  # Delete documents matching selector.
-  #
-  # - `delete(selector, callback)`
-  # - `delete(selector, options, callback)`
+  # Delete documents matching selector `delete(selector, [options], callback)`.
   delete: (selector, options..., callback) ->
     selector ?= {}
     options = options[0] || {}
@@ -88,12 +79,14 @@ class Driver.Collection
       selector = helper.convertSelectorId selector
       nCollection.remove selector, options, callback
 
-  # Save document.
+  # Save document `save(doc, [options], callback)`.
   save: (doc, options..., callback) ->
     if id = helper.getId doc
       selector = {}
       helper.setId selector, id
-      @update selector, doc, options..., callback
+      @update selector, doc, options..., (err) ->
+        return callback err if err
+        callback null, doc
     else
       @create doc, options..., callback
 

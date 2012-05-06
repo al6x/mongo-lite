@@ -164,6 +164,9 @@ class Driver.Cursor
   fields: (arg) -> @find {}, fields: arg
   timeout: (arg) -> @find {}, timeout: arg
 
+  # Alias for delete.
+  remove: (args...) -> @delete args...
+
 # Making methods of native cursor available.
 dummy = ->
 proto = Driver.Cursor.prototype

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <title>mong-lite</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta name='description' content=''>
+    <meta name='author' content=''>
+
+    <!-- Styles -->
+    <link href='assets/bootstrap/css/bootstrap.css' rel='stylesheet'>
+    <link href='assets/google-code-prettify/prettify.css' rel='stylesheet'>
+    <link href='assets/style.css' rel='stylesheet'>
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src='http://html5shim.googlecode.com/svn/trunk/html5.js'></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <div class='container'>
+      <div class='row'>
+        <div class='offset1 span10'>
+
+          <!-- Overview -->
+          <div class='page-header'>
+            <h1>mongo-lite.js <small>simple and compact API for MongoDB</small></h1>
+          </div>
+          <p>
+            MongoDB Driver with simple and compact API, it also eliminates some callbacks.
+          </p>
+          <p>
+            Install it with `npm install mongo-lite` command.
+          </p>
+          <p>
+            The project hosted on
+            <a href='http://github.com/alexeypetrushin/mongo-lite'>GitHub</a>
+            You can report bugs and discuss features on the
+            <a href='http://github.com/alexeypetrushin/mongo-lite/issues'>Issues</a> page.
+          </p>
+
+          <!-- Note. -->
+          <p>
+            <b>Note:</b> This is not full API coverage, but only most useful and frequently used methods,
+            sort of cheat-sheet.
+          </p>
+
+          <hr/>
+
+          <!-- Database. -->
+          <h2>Database</h2>
+
+          <!-- connect. -->
+          <div class='section'>
+            <p>
+              <b class='header'>connect</b>
+              `connect(url, [names])`<br/>
+              Connect to MongoDB, optionally takes list of collection names.<br/>
+              Url should be in form of `"mongodb://[username:password@]host[:port]/dbname"`
+            </p>
+<pre class='prettyprint'>
+var db = require('mongo-lite').connect('mongodb://localhost/test', ['posts', 'comments'])
+db.posts.insert({title: 'first'}, function(err, doc){})
+</pre>
+          </div>
+
+          <!-- collection. -->
+          <div class='section'>
+            <p>
+              <b class='header'>collection</b>
+              `collection(name, [options])`<br/>
+              Get collection.
+            </p>
+<pre class='prettyprint'>
+db.collection('posts').insert({title: 'first'}, function(err, doc){})
+
+db.posts = db.collection('posts')
+db.posts.insert({title: 'first'}, function(err, doc){})
+</pre>
+          </div>
+
+          <!-- clear. -->
+          <div class='section'>
+            <p>
+              <b class='header'>clear</b>
+              `clear(callback)`<br/>
+              Clears database, useful in testing.
+            </p>
+<pre class='prettyprint'>
+db.clear(function(err){})
+</pre>
+          </div>
+
+          <!-- CRUD -->
+          <h2>CRUD</h2>
+
+          <!-- insert. -->
+          <div class='section'>
+            <p>
+              <b class='header'>insert</b>
+              `insert(doc, [options], callback)`<br/>
+              Insert document into database, if document's `_id` not defined it will be set
+              automatically. You can also use `create` instead of `insert`.
+            </p>
+<pre class='prettyprint'>
+db.posts.insert({title: 'first'}, function(err, doc){})
+</pre>
+          </div>
+
+          <!-- update. -->
+          <div class='section'>
+            <p>
+              <b class='header'>update</b>
+              `update(selector, doc, [options], callback)`<br/>
+              Updates or replaces document or documents selected by selector.
+            </p>
+<pre class='prettyprint'>
+db.posts.insert({title: 'first'}, function(err, doc){
+  doc.title = 'second'
+  db.posts.update({_id: doc._id}, doc, function(err){})
+})
+</pre>
+          </div>
+
+          <!-- save. -->
+          <div class='section'>
+            <p>
+              <b class='header'>save</b>
+              `save(doc, [options], callback)`<br/>
+              Save document, if document not exist it will be inserted into database using `insert`, if
+              it already exist it will be updated using `update`, so basically it's just a shortcut
+              for `insert` and `update` methods.
+            </p>
+<pre class='prettyprint'>
+db.posts.save({title: 'first'}, function(err, doc){
+  doc.title = 'second'
+  db.posts.save(doc, function(err, doc){})
+})
+</pre>
+          </div>
+
+          <!-- remove. -->
+          <div class='section'>
+            <p>
+              <b class='header'>remove</b>
+              `remove(selector, [options], callback)`<br/>
+              Removes document or documents selected by selector. You can also use `delete` instead of
+              `remove`.
+            </p>
+<pre class='prettyprint'>
+db.posts.insert({title: 'first'}, function(err, doc){
+  db.posts.remove({_id: doc._id}, function(err){})
+})
+</pre>
+          </div>
+
+          <!-- Querying. -->
+          <h2>Querying</h2>
+
+          <!-- first. -->
+          <div class='section'>
+            <p>
+              <b class='header'>first</b>
+              `first([selector, [options]], callback)`<br/>
+              Get first document specified by selector and options, can be used with chainable query helpers.
+            </p>
+<pre class='prettyprint'>
+db.posts.first(function(err, doc){})
+db.posts.first({published: true}, {sort: {title: 1}}, function(err, doc){})
+db.posts.find({published: true}).sort({title: 1}).first(function(err, doc){})
+db.posts.sort({title: 1}).first({published: true}, function(err, doc){})
+</pre>
+          </div>
+
+          <!-- all. -->
+          <div class='section'>
+            <p>
+              <b class='header'>all</b>
+              `all([selector, [options]], callback)`<br/>
+              Get list of documents specified by selector and options, can be used with chainable query helpers.
+            </p>
+<pre class='prettyprint'>
+db.posts.all(function(err, docs){})
+db.posts.all({published: true}, {sort: {title: 1}, limit: 10}, function(err, docs){})
+db.posts.find({published: true}).sort({title: 1}).limit(10).all(function(err, docs){})
+db.posts.sort({title: 1}).limit(10).all({published: true}, function(err, docs){})
+</pre>
+          </div>
+
+          <!-- count. -->
+          <div class='section'>
+            <p>
+              <b class='header'>count</b>
+              `count([selector, [options]], callback)`<br/>
+              Get count of documents specified by selector, can be used with chainable query helpers.
+            </p>
+<pre class='prettyprint'>
+db.posts.count(function(err, count){})
+db.posts.count({published: true}, function(err, count){})
+db.posts.find({published: true}).count(function(err, count){})
+</pre>
+          </div>
+
+          <!-- remove. -->
+          <div class='section'>
+            <p>
+              <b class='header'>remove</b>
+              `remove([selector, [options]], callback)`<br/>
+              Remove documents selected by selector, can be used with chainable query helpers.
+            </p>
+<pre class='prettyprint'>
+db.posts.remove({published: true}, function(err){})
+db.posts.find({published: true}).remove(function(err){})
+</pre>
+          </div>
+
+          <!-- count. -->
+          <div class='section'>
+            <p>
+              <b class='header'>next</b>
+              `next(callback)`<br/>
+              Low-level method to iterate over collection using cursor, can be
+              used with chainable query helpers.
+              Usually You use `first` and `all` methods, and use `next` only in specific cases.<br/>
+              Every call to `next` returns object from collection, if there's no more element `null`
+              will be returned.<br/>
+              Cursor will be closed automatically when You get the last element, but if You stop iterating
+              before getting the last element You should close it explicitly by calling `cursor.close()`.
+            </p>
+<pre class='prettyprint'>
+var cursor = db.posts.find()
+var cursor = db.posts.find({published: true}, {sort: {title: 1}, limit: 10})
+var cursor = db.posts.find({published: true}).sort({title: 1}).limit(10)
+
+var printNext = function(){
+  cursor.next(function(err, doc){
+    if (doc) {
+      console.log(doc)
+      printNext()
+    }
+  })
+}
+printNext()
+</pre>
+          </div>
+
+          <!-- Query Helpers. -->
+          <h2>Query Helpers</h2>
+          <p>
+            You can build query directly using `selector` and `options`, but sometimes it's
+            handy to have chainable query builders like `limit`, `sort`, `skip`. They can be
+            combined in any order.
+          </p>
+
+          <!-- sort. -->
+          <div class='section'>
+            <p>
+              <b class='header'>sort</b>
+              `sort(fields)`<br/>
+              Add sorting to query.
+            </p>
+<pre class='prettyprint'>
+db.posts.sort({createdAt: -1, title: 1}).all(function(err, docs){})
+</pre>
+          </div>
+
+          <!-- limit. -->
+          <div class='section'>
+            <p>
+              <b class='header'>limit</b>
+              `limit(n)`<br/>
+              Limit queried documents.
+            </p>
+<pre class='prettyprint'>
+db.posts.limit(10).all(function(err, docs){})
+</pre>
+          </div>
+
+          <!-- skip. -->
+          <div class='section'>
+            <p>
+              <b class='header'>skip</b>
+              `skip(n)`<br/>
+              Skip documents.
+            </p>
+<pre class='prettyprint'>
+db.posts.skip(10).all(function(err, docs){})
+</pre>
+          </div>
+
+          <!-- paginate. -->
+          <div class='section'>
+            <p>
+              <b class='header'>paginate</b>
+              `paginate(page, perPage)`<br/>
+              Paginate returning documents, just a handy shortcut, uses `skip` and `limit` internally.
+            </p>
+<pre class='prettyprint'>
+db.posts.paginate(2, 10).all(function(err, docs){})
+</pre>
+          </div>
+
+          <!-- snapshot. -->
+          <div class='section'>
+            <p>
+              <b class='header'>snapshot</b>
+              `snapshot()`<br/>
+              Enables snapshot mode for query.
+            </p>
+<pre class='prettyprint'>
+db.posts.snapshot().all(function(err, docs){})
+</pre>
+          </div>
+
+          <!-- Native Driver. -->
+          <h2>Compatibility with underlying native MongoDB Driver</h2>
+          <p>
+            All methods of native driver also available, use it in the same way.
+            For example - You can call `ensureIndex` on collection as usual.
+<pre class='prettyprint'>
+db.posts.ensureIndex({createdAt: -1}, function(err){})
+</pre>
+          </p>
+
+          <!-- Usage with mocha.js -->
+          <h2>Usage with mocha.js</h2>
+          <div class='section'>
+            <p>
+              Use `clear` to clear database it before each test.
+            </p>
+<pre class='prettyprint'>
+describe('Posts', function(){
+  beforeEach(function(next){
+    this.db = mongo.connect('mongodb://localhost/test')
+    this.db.clear(next)
+  })
+
+  it('should be empty', function(next){
+    this.db.collection('posts').count(function(err, count){
+      if(err) return next(err)
+      expect(count).to.be(0)
+      next()
+    })
+  })
+})
+</pre>
+          </div>
+
+          <hr/>
+
+          <p>Copyright <a href='http://petrush.in'>Alexey Petrushin</a>, released under MIT License</p>
+        </div>
+      </div>
+
+    </div><!-- /container -->
+
+
+    <!-- Ribbon -->
+    <a href='http://github.com/alexeypetrushin/mongo-lite'><img style='position: absolute; top: 0; right: 0; border: 0; z-index: 2080;'  src='https://a248.e.akamai.net/assets.github.com/img/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67' alt='Fork me on GitHub'></a>
+
+    <!-- Scripts -->
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
+    <script src='assets/bootstrap/js/bootstrap.js'></script>
+    <script src='assets/google-code-prettify/prettify.js'></script>
+    <script>
+      $(prettyPrint)
+
+      // Changing `...` to <code> tags.
+      $(function(){
+        $('p').each(function(e){
+          var e = $(this)
+          e.html(
+            (e.html() || '')
+              .replace(/`(.+?)`/g, "<span class='code'>$1</span>")
+              .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+          )
+        })
+      })
+    </script>
+  </body>
+</html>
