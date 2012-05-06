@@ -8,7 +8,7 @@ class Driver.Collection
   constructor: (@name, @options, @db) ->
 
   # Create document in collection.
-  # 
+  #
   # - `create(doc, callback)`
   # - `create(doc, options, callback)`
   create: (doc, options..., callback) ->
@@ -40,7 +40,7 @@ class Driver.Collection
         callback err, result
 
   # Update document.
-  # 
+  #
   # - `update(selector, doc, callback)`
   # - `update(selector, doc, options, callback)`
   update: (selector, doc, options..., callback) ->
@@ -69,7 +69,7 @@ class Driver.Collection
         callback args...
 
   # Delete documents matching selector.
-  # 
+  #
   # - `delete(selector, callback)`
   # - `delete(selector, options, callback)`
   delete: (selector, options..., callback) ->
