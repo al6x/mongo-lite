@@ -1,20 +1,7 @@
-# Simple and minimal Driver for MongoDB
+mongo-lite.js simple and compact API for MongoDB.
 
-# Tasks
+Documentation [http://alexeypetrushin.github.com/mongo-lite](http://alexeypetrushin.github.com/mongo-lite)
 
-- Move logging to Command
-
-+ add ability to set class on collection
-
-
-# Shell commands
-
-getDatabaseNames database
-
-getCollectionNames dropDatabase eval createCollection stats name
-
-ensureIndex getIndexes dropIndex find findOne findAndModify mapReduce remove renameCollection save stats update insert drop
-
-count limit skip sort group size explain hint forEach map hasNext next
+Installation `npm install mongo-lite`
 
 Copyright (c) Alexey Petrushin, http://petrush.in, released under the MIT license.
