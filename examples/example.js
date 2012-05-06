@@ -1,5 +1,3 @@
-require('coffee-script')
-
 // Connecting to database and optionally initializing some collections.
 var db = require('mongo-lite').connect('mongodb://localhost/test', ['posts', 'comments'])
 

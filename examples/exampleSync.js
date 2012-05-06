@@ -1,5 +1,3 @@
-require('coffee-script')
-
 // Enabling support for synchronized mode.
 var sync  = require('synchronize')
 require('mongo-lite/lib/synchronize')

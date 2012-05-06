@@ -31,7 +31,8 @@
             MongoDB Driver with simple and compact API, it also eliminates some callbacks.
           </p>
           <p>
-            Install it with `npm install mongo-lite` command.
+            Install it with `npm install mongo-lite`, You may also take a look at
+            examples in `/examples` folder.
           </p>
           <p>
             The project hosted on
@@ -315,20 +316,74 @@ db.posts.snapshot().all(function(err, docs){})
 
           <!-- Native Driver. -->
           <h2>Compatibility with underlying native MongoDB Driver</h2>
+
           <p>
             All methods of native driver also available, use it in the same way.
             For example - You can call `ensureIndex` on collection as usual.
+          </p>
 <pre class='prettyprint'>
 db.posts.ensureIndex({createdAt: -1}, function(err){})
 </pre>
+
+          <!-- Custom defaults -->
+          <h2>Defaults &amp; Setting</h2>
+          <p>
+            By default MongoDB tuned for top performance, for services like logging &amp; analytics,
+            non-critical for data loss and errors.
           </p>
+          <p>
+            But, for services like blogs, sites, e-commerce and so on You usually
+            want different defaults. You can change it globally if You need.
+          </p>
+<pre class='prettyprint'>
+var mongo = require('mongo-lite')
+
+// Make all queries safe by default.
+mongo.options.safe = true
+
+// Make update to update all matched documents by default, not just the first one.
+mongo.options.multi = true
+
+// Use short string ids like `a1jaK` instead of `ObjectId("47cc67093475061e3d95369d")`.
+mongo.extendedOptions.generateId = true
+
+// Use `id` instead of `_id`.
+mongo.extendedOptions.convertId = true
+
+// There's also a method that does all this.
+mongo.useHandyButNotStandardDefaults()
+</pre>
+
+          <!-- Synchronous mode -->
+          <h2>Synchronous mode</h2>
+          <p>
+            There's an extension to driver that wraps its API and allows to use it as if
+            it's synchronous (without blocking Node.js, by using fibers).<br/>
+          </p>
+          <p>
+            Below are sample code showing how it looks like.
+          </p>
+<pre class='prettyprint'>
+require('synchronize')
+...
+var doc = db.posts.insert({title: 'first', published: false})
+doc.text = 'bla bla ...'
+db.posts.update({_id: doc._id}, doc)
+db.posts.remove({_id: doc._id})
+...
+</pre>
+          <p>
+            Notice - there's no callbacks, for more details look at `/examples/exampleSync.js`,
+            or read more about it
+            <a href='http://alexeypetrushin.github.com/synchronize'>synchronize.js</a>.
+          </p>
+
 
           <!-- Usage with mocha.js -->
           <h2>Usage with mocha.js</h2>
-          <div class='section'>
-            <p>
-              Use `clear` to clear database it before each test.
-            </p>
+          <p>
+            Use `clear` to clear database before each test.
+          </p>
 <pre class='prettyprint'>
 describe('Posts', function(){
   beforeEach(function(next){
@@ -345,7 +400,6 @@ describe('Posts', function(){
   })
 })
 </pre>
-          </div>
 
           <hr/>
 
@@ -354,7 +408,6 @@ describe('Posts', function(){
       </div>
 
     </div><!-- /container -->
-
 
     <!-- Ribbon -->
     <a href='http://github.com/alexeypetrushin/mongo-lite'><img style='position: absolute; top: 0; right: 0; border: 0; z-index: 2080;'  src='https://a248.e.akamai.net/assets.github.com/img/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67' alt='Fork me on GitHub'></a>
@@ -368,7 +421,7 @@ describe('Posts', function(){
 
       // Changing `...` to <code> tags.
       $(function(){
-        $('p').each(function(e){
+        $('p, li').each(function(e){
           var e = $(this)
           e.html(
             (e.html() || '')
