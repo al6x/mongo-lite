@@ -1,6 +1,7 @@
-_ = require 'underscore'
-
 module.exports = Driver = {}
+
+_      = require 'underscore'
+helper = require './helper'
 
 # ### Driver.
 _(Driver).extend
@@ -40,11 +41,20 @@ _(Driver).extend
     _(@options).extend safe: true, multi: true
     _(@extendedOptions).extend generateId: true, convertId: true
 
-  # Connect to mongo using mongo url `mongodb://username:password@host:port`
-  connect: (url) -> new Driver.Connection(url)
+  # Connect to mongo using mongo url `mongodb://username:password@host:port/dbname`,
+  # optionally You can pass database options and list of collections.
+  # `connect url, ['posts', 'comments']`.
+  connect: (url, args...) ->
+    collectionNames = if _.isArray(args[args.length - 1]) then args.pop() else []
+    dbOptions = args[0] || {}
+    url = helper.parseMongoUrl url
 
-  # Override with custom logger or set to `null` to disable.
-  logger: console
+    connection = new Driver.Connection(url)
+    db = connection.db url.db, dbOptions
+
+    # Adding shortcuts for collections.
+    db[name] = db.collection name for name in collectionNames
+    db
 
 # Requiring other modules.
 require './connection'

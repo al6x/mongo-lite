@@ -3,7 +3,7 @@ mongo = require '../lib/driver'
 
 describe "Collection", ->
   beforeEach (next) ->
-    @db = mongo.connect().db('test')
+    @db = mongo.connect 'mongodb://localhost/test'
     @db.clear next
 
   sync.it "should create", ->

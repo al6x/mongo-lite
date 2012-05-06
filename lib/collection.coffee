@@ -2,13 +2,15 @@ _       = require 'underscore'
 helper  = require './helper'
 NDriver = require 'mongodb'
 Driver  = require './driver'
-util    = require 'util'
 
 # Collection.
 class Driver.Collection
   constructor: (@name, @options, @db) ->
 
   # Create document in collection.
+  # 
+  # - `create(doc, callback)`
+  # - `create(doc, options, callback)`
   create: (doc, options..., callback) ->
     options = options[0] || {}
 
@@ -20,7 +22,7 @@ class Driver.Collection
       helper.setId doc, helper.generateId()
 
     # Logging.
-    @db.log info: "#{@name}.create #{util.inspect(doc)}, #{util.inspect(options)}"
+    @db.log? info: "#{@name}.create #{helper.inspect(doc)}, #{helper.inspect(options)}"
 
     # Saving.
     @getNative callback, (nCollection) =>
@@ -38,6 +40,9 @@ class Driver.Collection
         callback err, result
 
   # Update document.
+  # 
+  # - `update(selector, doc, callback)`
+  # - `update(selector, doc, options, callback)`
   update: (selector, doc, options..., callback) ->
     options = options[0] || {}
     throw new Error "document for update not provided!" unless doc
@@ -50,8 +55,9 @@ class Driver.Collection
       _.extend {safe: Driver.options.safe}, options
 
     # Logging.
-    [ss, ds, os] = [util.inspect(selector), util.inspect(doc), util.inspect(options)]
-    @db.log info: "#{@name}.update #{ss}, #{ds}, #{os}"
+    if @db.log?
+      [ss, ds, os] = [helper.inspect(selector), helper.inspect(doc), helper.inspect(options)]
+      @db.log info: "#{@name}.update #{ss}, #{ds}, #{os}"
 
     # Saving.
     @getNative callback, (nCollection) =>
@@ -63,6 +69,9 @@ class Driver.Collection
         callback args...
 
   # Delete documents matching selector.
+  # 
+  # - `delete(selector, callback)`
+  # - `delete(selector, options, callback)`
   delete: (selector, options..., callback) ->
     selector ?= {}
     options = options[0] || {}
@@ -71,7 +80,7 @@ class Driver.Collection
     options = _.extend {safe: Driver.options.safe}, options
 
     # Logging.
-    @db.log info: "#{@name}.delete #{util.inspect(selector)}, #{util.inspect(options)}"
+    @db.log? info: "#{@name}.delete #{helper.inspect(selector)}, #{helper.inspect(options)}"
 
     # Saving.
     @getNative callback, (nCollection) =>
@@ -91,6 +100,10 @@ class Driver.Collection
   # Querying, get cursor.
   cursor: (args...) -> new Driver.Cursor @, args...
   find: (args...) -> @cursor args...
+
+  # Aliasing insert & remove.
+  insert: (args...) -> @create args...
+  remove: (args...) -> @delete args...
 
   #
   getNative: (callback, next) ->
@@ -115,7 +128,7 @@ nativeProto = NDriver.Collection.prototype
 for name, v of nativeProto when !proto[name] and _.isFunction(v)
   do (name) ->
     proto[name] = (args...) ->
-      @db.log info: "#{@name}.#{name} #{util.inspect(args)}"
+      @db.log? info: "#{@name}.#{name} #{helper.inspect(args)}"
       callback = if _.isFunction(args[args.length - 1]) then args[args.length - 1] else dummy
       @getNative callback, (nCollection) ->
         nCollection[name] args...

@@ -1,5 +1,4 @@
 _      = require 'underscore'
-util   = require 'util'
 Driver = require './driver'
 
 module.exports = Driver.helper =
@@ -52,6 +51,7 @@ module.exports = Driver.helper =
     if _.isObject arg
       arg.host ?= '127.0.0.1'
       arg.port ?= 27017
+      arg.db ?= 'default'
       opts = arg
     else
       match = arg.match /(?:mongodb:\/\/)?(?:(.+):(.+)@)?(?:([^:]+)(?::(\d+))?\/)?(.+)/
@@ -60,6 +60,8 @@ module.exports = Driver.helper =
         password : match[2]
         host     : match[3] || '127.0.0.1'
         port     : parseInt(match[4] || 27017,10)
-        db       : match[5]
+        db       : match[5] || 'default'
     opts.options ?= {auto_reconnect:true}
     opts
+
+  inspect: (obj) -> JSON.stringify obj

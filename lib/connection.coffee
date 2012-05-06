@@ -4,19 +4,11 @@ helper  = require './helper'
 _       = require 'underscore'
 
 class Driver.Connection
-  # Connect to mongo using mongo url `mongodb://username:password@host:port`
-  constructor: (url) ->
-    @url = helper.parseMongoUrl url
-    @nServer = new NDriver.Server(@url.host, @url.port, @url.options)
+  # Connect to mongo.
+  constructor: (@options) ->
+    @nServer = new NDriver.Server(@options.host, @options.port, @options.options)
 
-  db: (name, args...) ->
-    options = if _.isObject args[0] then args.shift() else {}
-    collectionNames = args
-
-    # Adding shortcuts for collections.
-    db = new Driver.Db name, @, options
-    db[name] = db.collection name for name in collectionNames
-    db
+  db: (name, options = {}) -> new Driver.Db name, @, options
 
   getNativeDb: (name, options, callback, next) ->
     throw new Error "callback required!" unless callback
@@ -25,8 +17,8 @@ class Driver.Connection
       tmp = new NDriver.Db name, @nServer, options
       tmp.open (err, nDb) =>
         return callback err if err
-        if @url.username
-          nDb.authenticate @url.username, @url.password, (err, result) =>
+        if @options.username
+          nDb.authenticate @options.username, @options.password, (err, result) =>
             return callback err if err
             return callback new Error "invalid username or password!" unless result
             @dbsCache[name] = nDb

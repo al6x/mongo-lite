@@ -1,5 +1,4 @@
 _       = require 'underscore'
-util    = require 'util'
 helper  = require './helper'
 Driver  = require './driver'
 NDriver = require 'mongodb'
@@ -86,8 +85,8 @@ class Driver.Cursor
       @_next callback
     else
       # Logging
-      @collection.db.log
-        info: "#{@collection.name}.find #{util.inspect(@selector)}, #{util.inspect(@options)}"
+      @collection.db.log?(
+        info: "#{@collection.name}.find #{helper.inspect(@selector)}, #{helper.inspect(@options)}")
 
       # Querying.
       @collection.getNative callback, (nCollection) =>
@@ -115,7 +114,7 @@ class Driver.Cursor
   # timeout).
   close: (callback) ->
     unless @nCursor
-      throw new Error "cursor #{util.inspect @selector} already closed!"
+      throw new Error "cursor #{helper.inspect @selector} already closed!"
     @nCursor.close()
     @nCursor = null
     callback()
@@ -124,7 +123,7 @@ class Driver.Cursor
     if args.length > 0
       @find(args...).count callback
     else
-      @collection.db.log info: "#{@collection.name}.count #{util.inspect(@selector)}"
+      @collection.db.log? info: "#{@collection.name}.count #{helper.inspect(@selector)}"
       @collection.getNative callback, (nCollection) =>
         selector = helper.convertSelectorId @selector
         nCollection.count selector, callback
@@ -172,7 +171,7 @@ nativeProto = NDriver.Cursor.prototype
 for name, v of nativeProto when !proto[name] and _.isFunction(v)
   do (name) ->
     proto[name] = (args...) ->
-      @db.log info: "#{@collection.name}.#{name} #{util.inspect(args)}"
+      @db.log? info: "#{@collection.name}.#{name} #{helper.inspect(args)}"
       callback = if _.isFunction(args[args.length - 1]) then args[args.length - 1] else dummy
       @getNative callback, (nCursor) ->
         nCursor[name] args...

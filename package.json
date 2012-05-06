@@ -15,7 +15,7 @@
   },
   "license"      : "MIT",
   "scripts" : {
-    "prepublish"  : "cake compile",
-    "postpublish" : "cake clear"
+    "prepublish"  : "coffee --compile --output ./lib ./lib",
+    "postpublish" : "find ./lib -name '*.js' | xargs rm -f"
   }
 }

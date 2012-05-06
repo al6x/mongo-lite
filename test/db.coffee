@@ -4,7 +4,7 @@ _     = require 'underscore'
 
 describe "Database", ->
   beforeEach (next) ->
-    @db = mongo.connect().db('test')
+    @db = mongo.connect 'mongodb://localhost/test'
     @db.clear next
 
   it "should provide handy shortcuts for collections", ->

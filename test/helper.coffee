@@ -6,7 +6,7 @@ mongo.useHandyButNotStandardDefaults()
 global.expect  = require 'expect.js'
 global.p = (args...) -> console.log args...
 
-mongo.logger = null
+mongo.Db.prototype.log = null
 
 global.sync = require 'synchronize'
 require '../lib/synchronize'
