@@ -23,7 +23,6 @@ class Driver.Collection
 
     # Saving.
     @getNative callback, (nCollection) =>
-      # mongoOptions = helper.cleanOptions options
       doc = helper.convertDocIdToMongo doc
       nCollection.insert doc, options, (err, result) =>
         doc = helper.convertDocIdToDriver doc
@@ -55,7 +54,6 @@ class Driver.Collection
 
     # Saving.
     @getNative callback, (nCollection) =>
-      # mongoOptions = helper.cleanOptions options
       selector = helper.convertSelectorId selector
       doc = helper.convertDocIdToMongo doc
       nCollection.update selector, doc, options, (args...) ->
@@ -75,7 +73,6 @@ class Driver.Collection
 
     # Saving.
     @getNative callback, (nCollection) =>
-      # mongoOptions = helper.cleanOptions options
       selector = helper.convertSelectorId selector
       nCollection.remove selector, options, callback
 
