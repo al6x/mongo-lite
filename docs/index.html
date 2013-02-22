@@ -366,7 +366,7 @@ db.log = null
             Below are sample code showing how it looks like.
           </p>
 <pre class='prettyprint'>
-require('synchronize')
+require('mongo-lite/lib/synchronize')
 ...
 var doc = db.posts.insert({title: 'first', published: false})
 doc.text = 'bla bla ...'
@@ -396,7 +396,7 @@ describe('Posts', function(){
   it('should be empty', function(next){
     this.db.collection('posts').count(function(err, count){
       if(err) return next(err)
-      expect(count).to.be(0)
+      expect(count).to.eql(0)
       next()
     })
   })

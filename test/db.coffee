@@ -21,6 +21,6 @@ describe "Database", ->
     expect(@db.collectionNames()).not.to.contain 'alpha'
 
   it "should generate object id", ->
-    expect(@db.objectId().constructor).not.to.be undefined
+    expect(@db.objectId().constructor).not.to.eql undefined
     strId = @db.objectId().toString()
     expect(@db.objectId(strId).toString()).to.eql strId
