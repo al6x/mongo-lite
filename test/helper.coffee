@@ -3,7 +3,7 @@ mongo = require '../lib/driver'
 
 mongo.useHandyButNotStandardDefaults()
 
-global.expect  = require 'expect.js'
+global.expect = require('chai').expect
 global.p = (args...) -> console.log args...
 
 mongo.Db.prototype.log = null

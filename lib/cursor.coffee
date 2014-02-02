@@ -90,7 +90,6 @@ class Driver.Cursor
 
       # Querying.
       @collection.getNative callback, (nCollection) =>
-        # options = helper.cleanOptions @options
         selector = helper.convertSelectorId @selector
         @nCursor ?= nCollection.find selector, @options
         @_next callback

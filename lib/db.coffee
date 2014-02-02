@@ -56,6 +56,9 @@ class Driver.Db
     for type, msg of msgs
       console[type] "     mongo: #{@alias || @name}.#{msg}"
 
+  # Helper for generating mongo object id.
+  objectId: (id) -> if id then NDriver.ObjectID(id) else NDriver.ObjectID.createPk()
+
 # Making methods of native cursor available.
 dummy = ->
 proto = Driver.Db.prototype
