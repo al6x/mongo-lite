@@ -1,6 +1,6 @@
 mongo-lite.js simple and compact API for MongoDB.
 
-Documentation [http://alexeypetrushin.github.com/mongo-lite](http://alexeypetrushin.github.com/mongo-lite)
+Documentation https://al6x.github.io/mongo-lite/docs/index.html
 
 Installation `npm install mongo-lite`
 
